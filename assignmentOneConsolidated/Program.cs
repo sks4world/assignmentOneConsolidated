@@ -17,7 +17,20 @@ namespace assignmentOneConsolidated
             int n3 = 5;
             printTriangle(n3);
 
-            
+            int[] J = new int[] {1,3 };
+            int[] S = new int[] { 1, 3, 3, 2, 2, 2, 2, 2 };
+            int r4 = numJewelsInStones(J, S);
+            Console.WriteLine(r4);
+
+            int[] arr1 = new int[] { 1, 2, 3, 5,6,7,8,9 };
+            int[] arr2 = new int[] { 1, 2, 4, 5 };
+            int[] r5 = getLargestCommonSubArray(arr1, arr2);
+            string sx = String.Join("",r5);
+            Debug.WriteLine($"Longest string found is {sx}", sx);
+            foreach (var item in r5)
+            {
+                Console.WriteLine(item.ToString());
+            }
         }
 
         public static void printSelfDividingNumbers(int x, int y)
@@ -229,6 +242,120 @@ namespace assignmentOneConsolidated
             {
                 Console.WriteLine("Exception occurred while computing printTriangle()");
             }
+        }
+
+        public static int numJewelsInStones(int[] J, int[] S)
+        {
+            try
+            {
+                //Initialize
+                string p;
+                int countJinS;
+                int[] j1 = J;
+                int[] s1 = S;
+
+
+                //Pseudocode
+                p = "Pseudocode for numJewlsInStones\n";
+                p = p + "Iterate through the list of Jewels and for each item, iterate through the list of Stones to find a match\n";
+                p = p + "For each match found, increment a counter and print the counter\n";
+                Debug.WriteLine(p);
+
+                //Code
+                countJinS = 0;
+                foreach (int i in j1)
+                {
+                    //Debug.WriteLine($"{i}", i);
+                    foreach (int j in s1)
+                    {
+                        if (j == i)
+                        {
+                            countJinS += 1;
+                        }
+                    }
+                }
+                Debug.WriteLine($"Number of Jewels in Stones is {countJinS}", countJinS);
+                p = "Learnings and recommendations\n";
+                p = p + "1. Learning the techniques to handle large lists will give confidence. Right now, simple loops are used as it is small array\n";
+                p += "2. It is helpful to know all string functions by heart\n ";
+                p += "3. Strings and arrays have interchangeable needs\n";
+                p += "4.It is recommended to practise more on the arrays\n ";
+                Debug.WriteLine(p);
+            }
+            catch
+            {
+                Console.WriteLine("Exception occurred while computing numJewelsInStones()");
+            }
+            return 0;
+        }
+
+        public static int[] getLargestCommonSubArray(int []a, int []b)
+        {
+            int[] r5 = null;
+
+            try
+            {
+                //Initialize
+                string p;
+                string str1;
+                string str2;
+                int len;
+                int[] a1 = null;
+
+                //Pseudocode
+                p = "Pseudocode: read both the input arrays and convert into two strings S1 and S2\n";
+                p = p + "For the length of the string, find if the string S1 is contained in the string S2\n";
+                p = p + "If present, break and convert the string back to array and print the longest array found\n";
+                p = p + "If not present, drop the last character in the string and repeat the above step\n";
+                p = p + "If no string found, then print, first array is not found in the second array";
+                Debug.WriteLine(p);
+
+                //Code
+                str1 = string.Join("", a);
+                str2 = string.Join("", b);
+                len = str1.Length;
+
+
+
+                for (int i=len-1; i>0; i--)
+                {
+                    if(str2.Contains(str1))
+                    {
+                        //Debug.WriteLine($"Longest string found is {str1}", str1);
+                        break;
+                    }
+                    else
+                    {
+                        str1 = str1.Remove(i, 1);
+                    }
+                }
+                if (str1.Length > 0)
+                {
+                    char[] charArr = str1.ToCharArray();
+                    a1 = Array.ConvertAll(str1.Split(' '), int.Parse);
+                    r5 = a1;
+                    //r5 = Array.ConvertAll(charArr c => int.Parse(c));
+                    foreach (var item in a1)
+                    {
+                        Console.WriteLine(item.ToString());
+                    }
+                }
+
+                //Learnings and Recommendations
+                p = "Learnings and recommendations\n";
+                p = p + "1. Learning the techniques to handle integer and string arrays is needed\n";
+                p += "2. It is helpful to know joining an array into string and vice versa by heart\n ";
+                p += "3. Strings and integer arrays have interchangeable needs\n";
+                p += "4.It is recommended to practise more on the string to array conversion\n";
+                Debug.WriteLine(p);
+            }
+            catch
+            {
+                Console.WriteLine("Exception occurred while computing getLargestCommonSubArray()");
+            }
+
+            
+            return r5;
         }
     }
 }
