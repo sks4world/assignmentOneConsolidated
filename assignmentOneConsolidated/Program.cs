@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 
 namespace assignmentOneConsolidated
 {
@@ -31,6 +33,8 @@ namespace assignmentOneConsolidated
             {
                 Console.WriteLine(item.ToString());
             }
+
+            solvePuzzle();
         }
 
         public static void printSelfDividingNumbers(int x, int y)
@@ -357,5 +361,969 @@ namespace assignmentOneConsolidated
             
             return r5;
         }
+
+        public static void solvePuzzle()
+        {
+            try
+            {
+                //Initialize
+                string p;
+                string str1="UBER", str2="COOL", str3="UNCLE";
+                int leng = str1.Length + str2.Length;
+                int[] inNum = new int[leng+1];
+                int[] str1Arr = new int[str1.Length], str2Arr = new int[str2.Length], str3Arr = new int[str3.Length];
+                int sum = 0, co = 0, val = 0, valx1 = 0, chosen=0;
+                string str = null, strx1 = null;
+                bool fnd1 = false, fnd2 = false, fnd3 = false, fnd = false, fnd4=false;
+
+                //Pseudocode
+                p = "Read input strings, count number of characters, create an array with random numbers\n" +
+                    "Iterate all three strings together, pick last digit, assign values for string 1 and string 2 last character and get string 3 last digit by adding the two\n" +
+                    "If there are repeating characters within, assign same value. Repeat the same for last but one characters\n" +
+                    "The puzzle is solved";
+                Debug.WriteLine(p);
+
+                //Code
+                //Random rnd = new Random();
+                int c = 0;
+                for (int i=0;i<= leng; i++)
+                {
+                    //inNum[i] = rnd.Next(1, 10);
+                    if (i == leng - 1)
+                    {
+                        c = 1;
+                    }
+                    else
+                    {
+                        c += 1;
+                    }
+                    inNum[i] = c;
+                    //Debug.WriteLine(inNum[i]);
+                }
+
+                Dictionary<string, int> strval = new Dictionary<string, int>();
+
+                for (int i = str3.Length -1; i >= 0; i--)
+                {
+                    for (int j = str2.Length -1; j >= 0; j--)
+                    {
+                        for (int k = str1.Length -1; k >= 0; k--)
+                        {
+                            if ((i == str3.Length - 1) & (j == str2.Length - 1) & (k == str1.Length - 1)) //Unit digit in each string
+                            {
+                                //str1Arr[k] = inNum[1];//Pick a number for first string and second string unit digit
+                                //str2Arr[j] = inNum[2]; //Implemented for loop to pick number
+                                for (int ix = 0; ix<=leng;ix++)
+                                {
+                                    for (int iy = leng; iy>=0;iy--)
+                                    {
+                                        if (inNum[ix] + inNum[iy] > 10)
+                                        {
+                                            str1Arr[k] = inNum[ix];
+                                            str2Arr[j] = inNum[iy];
+                                            inNum[ix] = 0;
+                                            inNum[iy] = 0; //Make picked numbers as 0 to avoid picking again
+                                        }
+                                    }
+                                }
+                                sum = str1Arr[k] + str2Arr[j]; 
+                                if (sum > 0)
+                                {
+                                    if (sum > 9) //If Sum is > 9, give unit digit to unit place and carry over the tenth digit to tenth place
+                                    {
+                                        str3Arr[i] = sum % 10; // Fix value of third string unit digit
+                                        co = sum / 10; //Use carryover to add to tenth place digit
+                                    }
+                                    else //single digit number 
+                                    {
+                                        str3Arr[i] = sum;
+                                        co = 0;
+                                    }
+                                }
+                                else //sum < 0
+                                {
+                                    Debug.WriteLine("Negative number has to be handled");
+                                }
+                                for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                {
+                                    if (inNum[x]==str3Arr[i])
+                                    {
+                                        inNum[x] = 0; // Set to zero to avoid same number used again
+                                    }
+                                }
+                                Debug.WriteLine(str1Arr[k]);
+                                Debug.WriteLine(str2Arr[j]);
+                                Debug.WriteLine(str3Arr[i]);
+                                Debug.WriteLine(k);
+                                Debug.WriteLine(j);
+                                Debug.WriteLine(i);
+
+                                //Store the key value pair in a dictionary to address repeating characters
+                                str = str1.Substring(str1.Length - 1, 1);
+                                val = str1Arr[k];
+                                strval.Add(str, val);
+                                //Next set for string 2
+                                str = str2.Substring(str2.Length - 1, 1);
+                                val = str2Arr[j];
+                                strval.Add(str, val);
+                                //Next set for string 3
+                                str = str3.Substring(str3.Length - 1, 1);
+                                val = str3Arr[i];
+                                strval.Add(str, val);
+                                
+                            }
+
+                            //printvalues();
+                            
+                            if ((i == str3.Length - 2) & (j == str2.Length - 2) & (k == str1.Length - 2)) //Tenth digit in each string
+                            {
+                                //Check if the character in tenth digit has a set value, do it by dictionary lookup
+                                str = str1.Substring(str1.Length - 2, 1);
+                                if (strval.ContainsKey(str))
+                                {
+                                    val = strval[str];
+                                    fnd1 = true;
+                                    str1Arr[k] = val;
+                                }
+                                
+                                //Repeat for string 2
+                                str = str2.Substring(str2.Length - 2, 1);
+                                if (strval.ContainsKey(str))
+                                {
+                                    val = strval[str];
+                                    fnd2 = true;
+                                    str2Arr[j] = val;
+                                }
+
+                                //Repeat for string 3
+                                str = str3.Substring(str3.Length - 2, 1);
+                                if (strval.ContainsKey(str))
+                                {
+                                    val = strval[str];
+                                    fnd3 = true;
+                                    str3Arr[i] = val;
+                                }
+
+                                Debug.WriteLine(str1Arr[k]);
+                                Debug.WriteLine(str2Arr[j]);
+                                Debug.WriteLine(str3Arr[i]);
+                                Debug.WriteLine(k);
+                                Debug.WriteLine(j);
+                                Debug.WriteLine(i);
+                                Debug.WriteLine(i);
+
+
+                                //Decide which numbers to add or substract based on fixed numbers found
+                                if (fnd1==true & fnd2==true & fnd3==false) //1 and 2 we know, third is sum of them
+                                {
+                                    str = str3.Substring(str3.Length - 2, 1); //Derive value for tenth digit in string 3
+                                    sum = co+str1Arr[k] + str2Arr[j]; //include carryover from unit digit
+                                    if (sum > 0)
+                                    {
+                                        if (sum > 9) //If value greater than 9, take the carryover to next digit place
+                                        {
+                                            val = sum % 10;
+                                            co = sum / 10;
+                                        }
+                                        else //If single digit number, use the number as it is
+                                        {
+                                            val = sum;
+                                            co = 0;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Debug.WriteLine("Negative number to be handled");
+                                    }
+                                    str3Arr[i] = val;
+                                    strval.Add(str, val); //Store the newly fixed key value pair in dictionary
+                                    for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                    {
+                                        if (inNum[x] == str3Arr[i])
+                                        {
+                                            inNum[x] = 0; // Set to zero to avoid same number used again
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (fnd1==true & fnd2==false & fnd3==true)
+                                    {
+                                        str = str2.Substring(str2.Length - 2, 1); //Derive value for tenth digit in string 2
+                                        sum = str3Arr[i] - str1Arr[k] - co; //Include carryover from unit digit
+                                        if (sum < 0)
+                                        {
+                                            //Increase previous values by total 10, implemented above.
+                                            Debug.WriteLine("Negative value to be handled");
+                                        }
+                                        else
+                                        {
+                                            if (sum > 9) //Split the double digit if value > 9
+                                            {
+                                                val = sum % 10;
+                                                co = sum / 10;
+                                            }
+                                            else // If value <= 9, retain same value
+                                            {
+                                                val = sum;
+                                                co = 0;
+                                            }
+                                        }
+                                        str2Arr[j] = val;
+                                        strval.Add(str, val); //Store the newly fixed key value pair in dictionary
+                                        for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                        {
+                                            if (inNum[x] == str2Arr[j])
+                                            {
+                                                inNum[x] = 0; // Set to zero to avoid same number used again
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (fnd1 == false & fnd2 == true & fnd3 == true)
+                                        {
+                                            str = str1.Substring(str1.Length - 2, 1); //Derive value for tenth digit in string 1
+                                            sum = str3Arr[i] - str2Arr[j] - co; //Include carryover from unit digit
+                                            if (sum > 0)
+                                            {
+                                                if (sum > 9) //If value greater than 9, take the carryover to next digit place
+                                                {
+                                                    val = sum % 10;
+                                                    co = sum / 10;
+                                                }
+                                                else //If single digit number, use the number as it is
+                                                {
+                                                    val = sum;
+                                                    co = 0;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Debug.WriteLine("Negative number to be handled");
+                                            }
+                                            str1Arr[k] = val;
+                                            strval.Add(str, val); //Store the newly fixed key value pair in dictionary
+                                            for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                            {
+                                                if (inNum[x] == str1Arr[k])
+                                                {
+                                                    inNum[x] = 0; // Set to zero to avoid same number used again
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (fnd1 == false & fnd2 == false & fnd3 == true)
+                                            {
+                                                strx1 = str1.Substring(str1.Length - 2, 1);//Derive tenth digit for string 1
+                                                str = str2.Substring(str2.Length - 2, 1);
+                                                for (int x=0;x<=leng;x++)
+                                                {
+                                                    if (inNum[x] > 0)
+                                                    {
+                                                        if (str3Arr[i] - co - inNum[x] > 0)
+                                                        {
+                                                            sum = str3Arr[i] - co - inNum[x]; //This is string 2 tenth digit value, as we are picking a random number for string 1 tenth digit
+                                                            if (sum > 0)
+                                                            {
+                                                                if (sum > 9) //If value greater than 9, take the carryover to next digit place
+                                                                {
+                                                                    val = sum % 10;
+                                                                    co = sum / 10;
+                                                                }
+                                                                else //If single digit number, use the number as it is
+                                                                {
+                                                                    val = sum;
+                                                                    co = 0;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                Debug.WriteLine("Negative number to be handled");
+                                                            }
+                                                            //val = sum % 10; //This val is for string 2
+                                                            //co = sum / 10;
+                                                            valx1 = inNum[x]; //This number is for string 1 Tenth place digit
+                                                            fnd = true;
+                                                            chosen = i;
+                                                            inNum[x] = 0; //Set to 0 to avoid picking same number again
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                if (fnd == false)
+                                                {
+                                                    sum = str3Arr[i] - co - 2; //Force any number for string 1 tenth digit, in this case 2
+                                                    val = sum % 10; //This val is for string 2
+                                                    co = sum / 10;
+                                                    valx1 = 2; //Forced number for string 1 Tenth place digit
+                                                }
+                                                fnd = false;
+                                                str1Arr[k] = valx1;
+                                                strval.Add(strx1, valx1); //Store the newly fixed key value pair in dictionary for string 1
+                                                str2Arr[j] = val;
+                                                strval.Add(str, val); //Store the newly fixed key value pair in dictionary for string 2
+                                                for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                                {
+                                                    if (inNum[x] == str2Arr[j])
+                                                    {
+                                                        inNum[x] = 0; // Set to zero to avoid same number used again
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (fnd1 == false & fnd2 == true & fnd3 == false)
+                                                {
+                                                    strx1 = str1.Substring(str1.Length - 2, 1);
+                                                    str = str3.Substring(str3.Length - 2, 1);
+                                                    for (int x = 0; x <= leng; x++) //Choose a random number and assign to string 1 tenth place digit, avoid already chosen number above
+                                                    {
+                                                        if (inNum[x]>0)
+                                                        {
+                                                            sum = str2Arr[j] + co + inNum[x]; //String3=string1+string2 tenth place, string1 is forced
+                                                            if (sum > 0)
+                                                            {
+                                                                if (sum > 9) //If value greater than 9, take the carryover to next digit place
+                                                                {
+                                                                    val = sum % 10;
+                                                                    co = sum / 10;
+                                                                }
+                                                                else //If single digit number, use the number as it is
+                                                                {
+                                                                    val = sum;
+                                                                    co = 0;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                Debug.WriteLine("Negative number to be handled");
+                                                            }
+                                                            //val = sum % 10; //This val is for string 3
+                                                            //co = sum / 10;
+                                                            valx1 = inNum[x]; //This val is for string 1
+                                                            fnd = true;
+                                                            inNum[x] = 0; //Set value to 0 to avoid picking same number again
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (fnd == false)
+                                                    {
+                                                        sum = str2Arr[j] + co + 1; //Force any number for string 1 tenth digit, in this case 1
+                                                        val = sum % 10; //This val is for string 3
+                                                        co = sum / 10;
+                                                        valx1 = 1; //Forced number for string 1 Tenth place digit
+                                                    }
+                                                    fnd = false;
+                                                    str1Arr[k] = valx1;
+                                                    strval.Add(strx1, valx1); //Store the newly fixed key value pair in dictionary for string 1
+                                                    str3Arr[i] = val;
+                                                    strval.Add(str, val); //Store the newly fixed key value pair in dictionary for string 2
+                                                    for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                                    {
+                                                        if (inNum[x] == str3Arr[i])
+                                                        {
+                                                            inNum[x] = 0; // Set to zero to avoid same number used again
+                                                            break;
+                                                        }
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    Debug.WriteLine("Consider this new case");
+                                                }
+                                                Debug.WriteLine(str1Arr[k]);
+                                                Debug.WriteLine(str2Arr[j]);
+                                                Debug.WriteLine(str3Arr[i]);
+                                                Debug.WriteLine(k);
+                                                Debug.WriteLine(j);
+                                                Debug.WriteLine(i);
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                            }
+
+                            //printvalues();
+
+                            //100th Place, third digit from right
+                            fnd = false; fnd1 = false; fnd2 = false; fnd3 = false;
+                            if ((i == str3.Length - 3) & (j == str2.Length - 3) & (k == str1.Length - 3)) //Hundrendth digit in each string
+                            {
+                                //Check if the character in tenth digit has a set value, do it by dictionary lookup
+                                str = str1.Substring(str1.Length - 3, 1);
+                                if (strval.ContainsKey(str))
+                                {
+                                    val = strval[str];
+                                    fnd1 = true;
+                                    str1Arr[k] = val;
+                                }
+
+                                //Repeat for string 2
+                                str = str2.Substring(str2.Length - 3, 1);
+                                if (strval.ContainsKey(str))
+                                {
+                                    val = strval[str];
+                                    fnd2 = true;
+                                    str2Arr[j] = val;
+                                }
+
+                                //Repeat for string 3
+                                str = str3.Substring(str3.Length - 3, 1);
+                                if (strval.ContainsKey(str))
+                                {
+                                    val = strval[str];
+                                    fnd3 = true;
+                                    str3Arr[i] = val;
+                                }
+
+                                //Decide which numbers to add or substract based on fixed numbers found
+                                if (fnd1 == true & fnd2 == true & fnd3 == false) //1 and 2 we know, third is sum of them
+                                {
+                                    str = str3.Substring(str3.Length - 3, 1); //Derive value for tenth digit in string 3
+                                    sum = co + str1Arr[k] + str2Arr[j]; //include carryover from unit digit
+                                    if (sum > 0)
+                                    {
+                                        if (sum > 9) //If value greater than 9, take the carryover to next digit place
+                                        {
+                                            val = sum % 10;
+                                            co = sum / 10;
+                                        }
+                                        else //If single digit number, use the number as it is
+                                        {
+                                            val = sum;
+                                            co = 0;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Debug.WriteLine("Negative number to be handled");
+                                    }
+                                    //val = sum % 10;
+                                    //co = sum / 10;
+                                    str3Arr[i] = val;
+                                    strval.Add(str, val); //Store the newly fixed key value pair in dictionary
+                                    for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                    {
+                                        if (inNum[x] == str3Arr[i])
+                                        {
+                                            inNum[x] = 0; // Set to zero to avoid same number used again
+                                            break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (fnd1 == true & fnd2 == false & fnd3 == true)
+                                    {
+                                        str = str2.Substring(str2.Length - 3, 1); //Derive value for tenth digit in string 2
+                                        sum = str3Arr[i] - str1Arr[k] - co; //Include carryover from unit digit
+                                        if (sum > 0)
+                                        {
+                                            if (sum > 9) //If value greater than 9, take the carryover to next digit place
+                                            {
+                                                val = sum % 10;
+                                                co = sum / 10;
+                                            }
+                                            else //If single digit number, use the number as it is
+                                            {
+                                                val = sum;
+                                                co = 0;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Debug.WriteLine("Negative number to be handled");
+                                        }
+                                        //val = sum % 10;
+                                        //co = sum / 10;
+                                        str2Arr[j] = val;
+                                        strval.Add(str, val); //Store the newly fixed key value pair in dictionary
+                                        for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                        {
+                                            if (inNum[x] == str2Arr[j])
+                                            {
+                                                inNum[x] = 0; // Set to zero to avoid same number used again
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (fnd1 == false & fnd2 == true & fnd3 == true)
+                                        {
+                                            str = str1.Substring(str1.Length - 3, 1); //Derive value for tenth digit in string 1
+                                            sum = str3Arr[i] - str2Arr[j] - co; //Include carryover from unit digit
+                                            if (sum > 0)
+                                            {
+                                                if (sum > 9) //If value greater than 9, take the carryover to next digit place
+                                                {
+                                                    val = sum % 10;
+                                                    co = sum / 10;
+                                                }
+                                                else //If single digit number, use the number as it is
+                                                {
+                                                    val = sum;
+                                                    co = 0;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Debug.WriteLine("Negative number to be handled");
+                                            }
+                                            //val = sum % 10;
+                                            //co = sum / 10;
+                                            str1Arr[k] = val;
+                                            strval.Add(str, val); //Store the newly fixed key value pair in 
+                                            for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                            {
+                                                if (inNum[x] == str1Arr[k])
+                                                {
+                                                    inNum[x] = 0; // Set to zero to avoid same number used again
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (fnd1 == false & fnd2 == false & fnd3 == true)
+                                            {
+                                                strx1 = str1.Substring(str1.Length - 3, 1);//Derive tenth digit for string 1
+                                                str = str2.Substring(str2.Length - 3, 1);
+                                                for (int x = 0; x <= leng; x++)
+                                                {
+                                                    if (inNum[x] > 0)
+                                                    {
+                                                        if (str3Arr[i] - co - inNum[x] > 0)
+                                                        {
+                                                            sum = str3Arr[i] - co - inNum[x]; //This is string 2 tenth digit value, as we are picking a random number for string 1 tenth digit
+                                                            val = sum % 10; //This val is for string 2
+                                                            co = sum / 10;
+                                                            valx1 = inNum[x]; //This number is for string 1 Tenth place digit
+                                                            fnd = true;
+                                                            chosen = i;
+                                                            inNum[x] = 0; //Set to 0 to avoid picking same number again
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                if (fnd == false)
+                                                {
+                                                    sum = str3Arr[i] - co - 2; //Force any number for string 1 tenth digit, in this case 2
+                                                    val = sum % 10; //This val is for string 2
+                                                    co = sum / 10;
+                                                    valx1 = 2; //Forced number for string 1 Tenth place digit
+                                                }
+                                                fnd = false;
+                                                str1Arr[k] = valx1;
+                                                strval.Add(strx1, valx1); //Store the newly fixed key value pair in dictionary for string 1
+                                                str2Arr[j] = val;
+                                                strval.Add(str, val); //Store the newly fixed key value pair in dictionary for string 2
+                                                for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                                {
+                                                    if (inNum[x] == str2Arr[j])
+                                                    {
+                                                        inNum[x] = 0; // Set to zero to avoid same number used again
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (fnd1 == false & fnd2 == true & fnd3 == false)
+                                                {
+                                                    strx1 = str1.Substring(str1.Length - 3, 1);
+                                                    str = str3.Substring(str3.Length - 3, 1);
+                                                    for (int x = 0; x <= leng; x++) //Choose a random number and assign to string 1 tenth place digit, avoid already chosen number above
+                                                    {
+                                                        if (inNum[x]>0)
+                                                        {
+                                                            sum = str2Arr[j] + co + inNum[x]; //String3=string1+string2 tenth place, string1 is forced
+                                                            if (sum > 0)
+                                                            {
+                                                                if (sum > 9) //If value greater than 9, take the carryover to next digit place
+                                                                {
+                                                                    val = sum % 10;
+                                                                    co = sum / 10;
+                                                                }
+                                                                else //If single digit number, use the number as it is
+                                                                {
+                                                                    val = sum;
+                                                                    co = 0;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                Debug.WriteLine("Negative number to be handled");
+                                                            }
+                                                            //val = sum % 10; //This val is for string 3
+                                                            //co = sum / 10;
+                                                            valx1 = inNum[x]; //This val is for string 1
+                                                            inNum[x] = 0; //Set value to 0 to avoid picking same number again
+                                                            fnd = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (fnd == false)
+                                                    {
+                                                        sum = str2Arr[j] + co + 1; //Force any number for string 1 tenth digit, in this case 1
+                                                        val = sum % 10; //This val is for string 3
+                                                        co = sum / 10;
+                                                        valx1 = 1; //Forced number for string 1 Tenth place digit
+                                                    }
+                                                    fnd = false;
+                                                    str1Arr[k] = valx1;
+                                                    strval.Add(strx1, valx1); //Store the newly fixed key value pair in dictionary for string 1
+                                                    str3Arr[i] = val;
+                                                    strval.Add(str, val); //Store the newly fixed key value pair in dictionary for string 2
+                                                    for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                                    {
+                                                        if (inNum[x] == str3Arr[i])
+                                                        {
+                                                            inNum[x] = 0; // Set to zero to avoid same number used again
+                                                            break;
+                                                        }
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    Debug.WriteLine("Consider this new case");
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                            }
+
+                            //printvalues();
+
+                            //1000th Place, fourth digit from right
+                            fnd = false; fnd1 = false; fnd2 = false; fnd3 = false; fnd4=false;
+                            if ((i == str3.Length - 4) & (j == str2.Length - 4) & (k == str1.Length - 4)) //Thousandth digit in each string
+                            {
+                                //Check if the character in 1000th digit has a set value, do it by dictionary lookup
+                                str = str1.Substring(str1.Length - 4, 1);
+                                if (strval.ContainsKey(str))
+                                {
+                                    val = strval[str];
+                                    fnd1 = true;
+                                    str1Arr[k] = val;
+                                }
+
+                                //Repeat for string 2
+                                str = str2.Substring(str2.Length - 4, 1);
+                                if (strval.ContainsKey(str))
+                                {
+                                    val = strval[str];
+                                    fnd2 = true;
+                                    str2Arr[j] = val;
+                                }
+
+                                //Repeat for string 3
+                                str = str3.Substring(str3.Length - 4, 1);
+                                if (strval.ContainsKey(str))
+                                {
+                                    val = strval[str];
+                                    fnd3 = true;
+                                    str3Arr[i] = val;
+                                }
+
+                                //Decide which numbers to add or substract based on fixed numbers found
+                                if (fnd1 == true & fnd2 == true & fnd3 == false) //1 and 2 we know, third is sum of them
+                                {
+                                    str = str3.Substring(str3.Length - 4, 1); //Derive value for tenth digit in string 3
+                                    sum = co + str1Arr[k] + str2Arr[j]; //include carryover from unit digit
+                                    if (sum > 0)
+                                    {
+                                        if (sum > 9) //If value greater than 9, take the carryover to next digit place
+                                        {
+                                            val = sum % 10;
+                                            co = sum / 10;
+                                        }
+                                        else //If single digit number, use the number as it is
+                                        {
+                                            val = sum;
+                                            co = 0;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Debug.WriteLine("Negative number to be handled");
+                                    }
+                                    //val = sum % 10;
+                                    //co = sum / 10;
+                                    str3Arr[i] = val;
+                                    strval.Add(str, val); //Store the newly fixed key value pair in dictionary
+                                    for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                    {
+                                        if (inNum[x] == str3Arr[i])
+                                        {
+                                            inNum[x] = 0; // Set to zero to avoid same number used again
+                                            break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (fnd1 == true & fnd2 == false & fnd3 == true)
+                                    {
+                                        str = str2.Substring(str2.Length - 4, 1); //Derive value for tenth digit in string 2
+                                        sum = str3Arr[i] - str1Arr[k] - co; //Include carryover from unit digit
+                                        if (sum > 0)
+                                        {
+                                            if (sum > 9) //If value greater than 9, take the carryover to next digit place
+                                            {
+                                                val = sum % 10;
+                                                co = sum / 10;
+                                            }
+                                            else //If single digit number, use the number as it is
+                                            {
+                                                val = sum;
+                                                co = 0;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Debug.WriteLine("Negative number to be handled");
+                                        }
+                                        //val = sum % 10;
+                                        //co = sum / 10;
+                                        str2Arr[j] = val;
+                                        strval.Add(str, val); //Store the newly fixed key value pair in dictionary
+                                        for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                        {
+                                            if (inNum[x] == str2Arr[j])
+                                            {
+                                                inNum[x] = 0; // Set to zero to avoid same number used again
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (fnd1 == false & fnd2 == true & fnd3 == true)
+                                        {
+                                            str = str1.Substring(str1.Length - 4, 1); //Derive value for tenth digit in string 1
+                                            sum = str3Arr[i] - str2Arr[j] - co; //Include carryover from unit digit
+                                            if (sum > 0)
+                                            {
+                                                if (sum > 9) //If value greater than 9, take the carryover to next digit place
+                                                {
+                                                    val = sum % 10;
+                                                    co = sum / 10;
+                                                }
+                                                else //If single digit number, use the number as it is
+                                                {
+                                                    val = sum;
+                                                    co = 0;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Debug.WriteLine("Negative number to be handled");
+                                            }
+                                            //val = sum % 10;
+                                            //co = sum / 10;
+                                            str1Arr[k] = val;
+                                            strval.Add(str, val); //Store the newly fixed key value pair in dictionary
+                                            for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                            {
+                                                if (inNum[x] == str1Arr[k])
+                                                {
+                                                    inNum[x] = 0; // Set to zero to avoid same number used again
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (fnd1 == false & fnd2 == false & fnd3 == true)
+                                            {
+                                                strx1 = str1.Substring(str1.Length - 4, 1);//Derive tenth digit for string 1
+                                                str = str2.Substring(str2.Length - 4, 1);
+                                                for (int x = 0; x <= leng; x++)
+                                                {
+                                                    if (inNum[x] > 0)
+                                                    {
+                                                        if (str3Arr[i] - co - inNum[x] > 0)
+                                                        {
+                                                            sum = str3Arr[i] - co - inNum[x]; //This is string 2 tenth digit value, as we are picking a random number for string 1 tenth digit
+                                                            if (sum > 0)
+                                                            {
+                                                                if (sum > 9) //If value greater than 9, take the carryover to next digit place
+                                                                {
+                                                                    val = sum % 10;
+                                                                    co = sum / 10;
+                                                                }
+                                                                else //If single digit number, use the number as it is
+                                                                {
+                                                                    val = sum;
+                                                                    co = 0;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                Debug.WriteLine("Negative number to be handled");
+                                                            }
+                                                            //val = sum % 10; //This val is for string 2
+                                                            //co = sum / 10;
+                                                            valx1 = inNum[x]; //This number is for string 1 Tenth place digit
+                                                            fnd = true;
+                                                            chosen = i;
+                                                            inNum[x] = 0; //Set value to 0 to avoid picking same number again
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                if (fnd == false)
+                                                {
+                                                    sum = str3Arr[i] - co - 2; //Force any number for string 1 tenth digit, in this case 2
+                                                    val = sum % 10; //This val is for string 2
+                                                    co = sum / 10;
+                                                    valx1 = 2; //Forced number for string 1 Tenth place digit
+                                                }
+                                                fnd = false;
+                                                str1Arr[k] = valx1;
+                                                strval.Add(strx1, valx1); //Store the newly fixed key value pair in dictionary for string 1
+                                                str2Arr[j] = val;
+                                                strval.Add(str, val); //Store the newly fixed key value pair in dictionary for string 2
+                                                for (int x = 0; x <= leng; x++) //Check if chosen number is in random numbers array and replace with 0 to avoid use
+                                                {
+                                                    if (inNum[x] == str2Arr[j])
+                                                    {
+                                                        inNum[x] = 0; // Set to zero to avoid same number used again
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (fnd1 == false & fnd2 == true & fnd3 == false)
+                                                {
+                                                    strx1 = str1.Substring(str1.Length - 4, 1);
+                                                    str = str3.Substring(str3.Length - 4, 1);
+                                                    for (int x = 0; x <= leng; x++) //Choose a random number and assign to string 1 tenth place digit, avoid already chosen number above
+                                                    {
+                                                        if (inNum[x]>0)
+                                                        {
+                                                            //sum = str2Arr[j] + co + inNum[x]; //String3=string1+string2 tenth place, string1 is forced
+                                                            //Change this part... choose two random numbers. One for sum as well to satisfy co+U+C = U*10+N. Choose N first and decide U. Replace C and N with numbers to get this condition satisfied.
+                                                            //Let inNum[x] selected be N. Then U would be (co+C-N)/9
+                                                            sum = co + str2Arr[j] - inNum[x]; //inNum[x] is the value of third string first letter
+                                                            if (sum%9==0)
+                                                            {
+                                                                fnd4 = true;
+                                                                val = sum/9; //This is 10000th place for string 1 (first letter value)
+                                                                valx1 = inNum[x]; //This val is for string 3
+                                                            }
+                                                            else
+                                                            {
+                                                                //find a number in inNum[x] that makes co + str2Arr[j] - inNum[x] divisible by 9 (sum of digits divisible by 9)
+                                                                if (9-(co + str2Arr[j] - inNum[x])>0)
+                                                                {
+                                                                    
+                                                                    val = (co + str2Arr[j] - inNum[x]) + (9 - (co + str2Arr[j] - inNum[x]));//Val for string 3
+                                                                    valx1 = 9; //This val is for string 1, it is 9
+                                                                    fnd4 = true;
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (18 - (co + str2Arr[j] - inNum[x]) > 0)
+                                                                    {
+                                                                        
+                                                                        val = (co + str2Arr[j] - inNum[x]) + (18 - (co + str2Arr[j] - inNum[x]));
+                                                                        valx1 = 18; //This val is for string 1, it is 18
+                                                                        fnd4 = true;
+                                                                    }
+                                                                }
+
+                                                            }
+
+                                                            
+                                                            //val = sum % 10; //This val is for string 3
+                                                            //co = sum / 10;
+                                                            //valx1 = inNum[x]; //This val is for string 1
+                                                            //fnd = true;
+                                                            //inNum[x] = 0;//Set value to 0 to avoid picking same number again
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (fnd4 == false)
+                                                    {
+                                                        //sum = str2Arr[j] + co + 1; //Force any number for string 1 tenth digit, in this case 1
+                                                        //val = sum % 10; //This val is for string 3
+                                                        //co = sum / 10;
+                                                        //valx1 = 1; //Forced number for string 1 Tenth place digit
+                                                    }
+                                                    fnd = false;
+                                                    fnd4 = false;
+                                                    str1Arr[k] = val;
+                                                    strval.Add(strx1, val); //Store the newly fixed key value pair in dictionary for string 1
+                                                    str3Arr[i] = valx1;
+                                                    strval.Add(str, valx1); //Store the newly fixed key value pair in dictionary for string 2
+                                                    
+
+                                                }
+                                                else
+                                                {
+                                                    Debug.WriteLine("Consider this new case");
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                            }
+                            //
+                        }
+                    }
+                }
+                printvalues();
+
+                void printvalues ()
+                {
+                    for (int i = 0; i < str1.Length; i++)
+                    {
+                        Debug.WriteLine(str1Arr[i]);
+                        //Debug.WriteLine(str2Arr[i]);
+                    }
+                    Debug.WriteLine("............");
+                    for (int i = 0; i < str1.Length; i++)
+                    {
+                        //Debug.WriteLine(str1Arr[i]);
+                        Debug.WriteLine(str2Arr[i]);
+                    }
+                    Debug.WriteLine("______");
+                    for (int i = 0; i < str3.Length; i++)
+                    {
+                        Debug.WriteLine(str3Arr[i]);
+                    }
+                    Debug.WriteLine("+++++++++++++");
+                }
+                //Learings and Recommendations
+
+
+
+
+            }
+
+            catch
+            {
+                Console.WriteLine("Exception occurred while computing solvePuzzle()");
+            }
+
+        }
+
     }
 }
